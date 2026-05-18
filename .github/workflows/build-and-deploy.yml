@@ -41,6 +41,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Clone infrastructure repo
+        run: |
+          cd ..
+          git clone git@github.com:korz-sh/infraestructure.git infrastructure
+          cd -
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
@@ -138,12 +144,12 @@ jobs:
 
       - name: Deploy with SAM
         run: |
-          cd infrastructure
-          # Map API name to parameter name
+          cd ../infrastructure
+          # Map API name to parameter name (entitlement-api -> EntitlementApiImageUri)
           PARAM_NAME="${{ inputs.api_name }}"
-          PARAM_NAME="${PARAM_NAME/-api/}"  # Remove -api suffix
-          PARAM_NAME="$(echo $PARAM_NAME | sed 's/-//g')"  # Remove hyphens
-          PARAM_NAME="${PARAM_NAME^}ApiImageUri"  # Capitalize and add ApiImageUri suffix
+          PARAM_NAME="${PARAM_NAME//-/ }"  # Replace hyphens with spaces
+          PARAM_NAME="$(echo $PARAM_NAME | sed 's/\b\(.\)/\u\1/g' | sed 's/ //g')"  # Capitalize words
+          PARAM_NAME="${PARAM_NAME}ImageUri"  # Add ImageUri suffix
 
           sam deploy \
             --config-env staging \
