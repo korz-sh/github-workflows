@@ -44,7 +44,7 @@ jobs:
       - name: Clone infrastructure repo
         run: |
           cd ..
-          git clone git@github.com:korz-sh/infraestructure.git infrastructure
+          git clone https://github.com/korz-sh/infraestructure.git infrastructure
           cd -
 
       - name: Set up Docker Buildx
