@@ -139,11 +139,17 @@ jobs:
       - name: Deploy with SAM
         run: |
           cd infrastructure
+          # Map API name to parameter name
+          PARAM_NAME="${{ inputs.api_name }}"
+          PARAM_NAME="${PARAM_NAME/-api/}"  # Remove -api suffix
+          PARAM_NAME="$(echo $PARAM_NAME | sed 's/-//g')"  # Remove hyphens
+          PARAM_NAME="${PARAM_NAME^}ApiImageUri"  # Capitalize and add ApiImageUri suffix
+
           sam deploy \
             --config-env staging \
             --no-confirm-changeset \
             --parameter-overrides \
-              ImageUri=${{ needs.build-and-push.outputs.image-uri }}
+              ${PARAM_NAME}=${{ needs.build-and-push.outputs.image-uri }}
 
       - name: Mark deployment as successful
         uses: actions/github-script@v7
