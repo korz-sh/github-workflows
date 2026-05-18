@@ -1,6 +1,6 @@
 name: Build and Deploy
 
-on:
+"on":
   workflow_call:
     inputs:
       api_name:
